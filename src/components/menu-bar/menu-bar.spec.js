@@ -1,5 +1,15 @@
 ddescribe('mdMenuBar', function() {
   beforeEach(module('material.components.menuBar'));
+
+  describe('MenuBar Directive', function() {
+    it('sets md-position-mode to "bottom left" on nested menus', function() {
+      var menuBar = setup();
+      var nestedMenu = menuBar[0].querySelector('md-menu');
+      expect(nestedMenu.getAttribute('md-position-mode')).toBe('left bottom');
+    });
+    it('preserves md-position-mode manually set');
+  });
+
   describe('MenuBarCtrl', function() {
     var menuBar, ctrl;
     beforeEach(function() {

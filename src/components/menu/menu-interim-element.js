@@ -142,8 +142,16 @@ function MenuProvider($$interimElementProvider) {
           scope.$apply(function() {
             switch (ev.keyCode) {
               case $mdConstant.KEY_CODE.ESCAPE: opts.mdMenuCtrl.close(); break;
-              case $mdConstant.KEY_CODE.UP_ARROW: focusMenuItem(ev, opts.menuContentEl, opts, -1); break;
-              case $mdConstant.KEY_CODE.DOWN_ARROW: focusMenuItem(ev, opts.menuContentEl, opts, 1); break;
+              case $mdConstant.KEY_CODE.UP_ARROW:
+                if (!focusMenuItem(ev, opts.menuContentEl, opts, -1)) {
+                  opts.mdMenuCtrl.triggerContainerProxy(ev);
+                }
+                break;
+              case $mdConstant.KEY_CODE.DOWN_ARROW:
+                if (!focusMenuItem(ev, opts.menuContentEl, opts, 1)) {
+                  opts.mdMenuCtrl.triggerContainerProxy(ev);
+                }
+                break;
             }
           });
         });
@@ -184,11 +192,6 @@ function MenuProvider($$interimElementProvider) {
         };
         opts.menuContentEl[0].addEventListener('click', captureClickListener, true);
 
-        // kick off initial focus in the menu on the first element
-        var focusTarget = opts.menuContentEl[0].querySelector('[md-menu-focus-target]');
-        if (!focusTarget) focusTarget = opts.menuContentEl[0].firstElementChild.firstElementChild;
-        focusTarget.focus();
-
         return function cleanupInteraction() {
           element.removeClass('md-clickable');
           opts.backdrop.off('click');
@@ -214,13 +217,15 @@ function MenuProvider($$interimElementProvider) {
 
       // Traverse through our elements in the specified direction (+/-1) and try to
       // focus them until we find one that accepts focus
+      var didFocus;
       for (var i = currentIndex + direction; i >= 0 && i < items.length; i = i + direction) {
         var focusTarget = items[i].firstElementChild || items[i];
-        var didFocus = attemptFocus(focusTarget);
+        didFocus = attemptFocus(focusTarget);
         if (didFocus) {
           break;
         }
       }
+      return didFocus;
     }
 
     /**
@@ -327,9 +332,9 @@ function MenuProvider($$interimElementProvider) {
         // case 'top':
         //   position.top = originNodeRect.top;
         //   break;
-        // case 'bottom':
-        //   position.top = originNodeRect.top + originNodeRect.height;
-        //   break;
+        case 'bottom':
+          position.top = originNodeRect.top + originNodeRect.height;
+          break;
         default:
           throw new Error('Invalid target mode "' + positionMode.top + '" specified for md-menu on Y axis.');
       }
@@ -344,10 +349,10 @@ function MenuProvider($$interimElementProvider) {
           transformOrigin += 'right';
           break;
         // Future support for mdMenuBar
-        // case 'left':
-        //   position.left = originNodeRect.left;
-        //   transformOrigin += 'left';
-        //   break;
+        case 'left':
+          position.left = originNodeRect.left;
+          transformOrigin += 'left';
+          break;
         // case 'right':
         //   position.left = originNodeRect.right - containerNode.offsetWidth;
         //   transformOrigin += 'right';

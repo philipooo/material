@@ -10,6 +10,10 @@ md-toolbar.md-menu-toolbar {
 md-menu-bar {
   padding: 0 2.5 * $baseline-grid;
   display: block;
+  .md-menu {
+    display: inline-block;
+    padding: 0;
+  }
   button {
     font-size: rem(1.4);
     padding: 0 1.25 * $baseline-grid;
@@ -17,5 +21,54 @@ md-menu-bar {
     border: 0;
     background-color: transparent;
     height: 5 * $baseline-grid;
+  }
+}
+
+md-menu-content.md-menu-bar-menu {
+  max-height: none;
+  padding: 2 * $baseline-grid 0;
+  &.md-with-icons {
+    md-menu-item {
+      position: relative;
+      > md-icon {
+        position: absolute;
+        padding: 0;
+        width: 24px;
+        top: 0.75 * $baseline-grid;
+        left: 3 * $baseline-grid;
+      }
+      > .md-button, .md-menu > .md-button {
+        padding: 0 4 * $baseline-grid 0 8 * $baseline-grid;
+      }
+    }
+  }
+  .md-button {
+    min-height: 4 * $baseline-grid;
+  }
+  md-menu-divider {
+    margin: $baseline-grid 0;
+  }
+
+  .md-menu {
+    padding: 0;
+    > .md-button {
+      position: relative;
+      margin: 0;
+      width: 100%;
+      text-align: left;
+      text-align: start;
+      text-transform: none;
+      font-weight: normal;
+      border-radius: 0px;
+      &:after {
+        display: block;
+        content: '\25BC';
+        position: absolute;
+        top: 0px;
+        speak: none;
+        transform: rotate(270deg) scaleY(0.8);
+        right: 3.5 * $baseline-grid;
+      }
+    }
   }
 }

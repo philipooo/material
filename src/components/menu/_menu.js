@@ -179,6 +179,7 @@ function MenuController($mdMenu, $attrs, $element, $scope) {
 
   var menuContainer;
   var ctrl = this;
+  this.containerProxies = [];
   var triggerElement;
 
   // Called by our linking fn to provide access to the menu-content
@@ -194,6 +195,7 @@ function MenuController($mdMenu, $attrs, $element, $scope) {
 
     ctrl.isOpen = true;
     triggerElement.setAttribute('aria-expanded', 'true');
+    $scope.$emit('$mdMenuOpen', $element);
     $mdMenu.show({
       scope: $scope,
       mdMenuCtrl: ctrl,
@@ -204,6 +206,26 @@ function MenuController($mdMenu, $attrs, $element, $scope) {
   // Expose a open function to the child scope for html to use
   $scope.$mdOpenMenu = this.open;
 
+  $scope.$watch(function() { return ctrl.isOpen; }, function() {
+    $scope.$mdMenuIsOpen = ctrl.isOpen;
+  });
+
+  this.focusMenuContainer = function focusMenuContainer() {
+    var focusTarget = menuContainer[0].querySelector('[md-menu-focus-target]');
+    if (!focusTarget) focusTarget = menuContainer[0].firstElementChild.firstElementChild.firstElementChild;
+    focusTarget.focus();
+  };
+
+  this.registerContainerProxy = function registerContainerProxy(handler) {
+    this.containerProxies.push(handler);
+  };
+
+  this.triggerContainerProxy = function triggerContainerProxy(ev) {
+    angular.forEach(this.containerProxies, function(proxy) {
+      proxy(ev);
+    });
+  };
+
   // Use the $mdMenu interim element service to close the menu contents
   this.close = function closeMenu(skipFocus) {
     if ( !ctrl.isOpen ) return;
@@ -211,6 +233,8 @@ function MenuController($mdMenu, $attrs, $element, $scope) {
     ctrl.isOpen = false;
     triggerElement.setAttribute('aria-expanded', 'false');
     $mdMenu.hide();
+
+    $scope.$emit('$mdMenuClose', $element);
 
     if (!skipFocus) {
       $element.children()[0].focus();

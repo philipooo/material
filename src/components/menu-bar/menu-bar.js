@@ -14,30 +14,83 @@ function MenuBarDirective() {
     restrict: 'E',
     require: 'mdMenuBar',
     controller: MenuBarCtrl,
-    link: function(scope, el, attrs, ctrl) {
-      ctrl.init();
-    }
+    compile: compile
   };
+
+  function compile(templateEl, templateAttrs) {
+    angular.forEach(templateEl[0].children, function(menuEl) {
+      if (menuEl.nodeName == 'MD-MENU') {
+        if (!menuEl.hasAttribute('md-position-mode')) {
+          menuEl.setAttribute('md-position-mode', 'left bottom');
+        }
+        var contentEl = menuEl.children[1];
+        if (contentEl && contentEl.nodeName == 'MD-MENU-CONTENT') {
+          contentEl.classList.add('md-menu-bar-menu');
+          contentEl.classList.add('md-dense');
+          if (!contentEl.hasAttribute('width')) {
+            contentEl.setAttribute('width', 5);
+          }
+        }
+      }
+    });
+    return link;
+  }
+
+  function link(scope, el, attrs, ctrl) {
+    ctrl.init();
+  }
 }
 
-function MenuBarCtrl($element, $attrs, $mdConstant, $document, $mdUtil) {
+function MenuBarCtrl($scope, $element, $attrs, $mdConstant, $document, $mdUtil) {
   this.$element = $element;
   this.$attrs = $attrs;
   this.$mdConstant = $mdConstant;
   this.$mdUtil = $mdUtil;
   this.$document = $document;
+  this.$scope = $scope;
 }
 
 MenuBarCtrl.prototype.init = function() {
-  this.$element.on('keydown', angular.bind(this, this.handleKeyDown));
+  var $element = this.$element;
+  var self = this;
+  $element.on('keydown', angular.bind(this, this.handleKeyDown));
+  this.$scope.$on('$mdMenuOpen', function(event, el) {
+    if ($element[0].contains(el[0])) {
+      el[0].classList.add('md-open');
+      self.currentlyOpenMenu = el.controller('mdMenu');
+      self.currentlyOpenMenu.registerContainerProxy(self.handleKeyDown.bind(self));
+    }
+  });
+  this.$scope.$on('$mdMenuClose', function(event, el) {
+    if ($element[0].contains(el[0])) {
+      el[0].classList.remove('md-open');
+      self.currentlyOpenMenu = undefined;
+    }
+  });
 };
 
 MenuBarCtrl.prototype.handleKeyDown = function(e) {
   var keyCodes = this.$mdConstant.KEY_CODE;
+  var menuCtrl = this.currentlyOpenMenu;
   switch (e.keyCode) {
-    case keyCodes.DOWN_ARROW: return this.openFocusedMenu();
-    case keyCodes.LEFT_ARROW: return this.focusMenu(-1);
-    case keyCodes.RIGHT_ARROW: return this.focusMenu(+1);
+    case keyCodes.DOWN_ARROW:
+      if (menuCtrl) {
+        menuCtrl.focusMenuContainer();
+      } else {
+        this.openFocusedMenu();
+      }
+      break;
+    case keyCodes.UP_ARROW:
+      menuCtrl && menuCtrl.close();
+      break;
+    case keyCodes.LEFT_ARROW:
+      menuCtrl && menuCtrl.close();
+      this.focusMenu(-1);
+      break;
+    case keyCodes.RIGHT_ARROW:
+      menuCtrl && menuCtrl.close();
+      this.focusMenu(+1);
+      break;
   }
 };
 
