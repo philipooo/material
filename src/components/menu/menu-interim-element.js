@@ -32,6 +32,7 @@ function MenuProvider($$interimElementProvider) {
       disableParentScroll: true,
       skipCompile: true,
       preserveScope: true,
+      skipHide: true,
       themable: true
     };
 
@@ -164,7 +165,7 @@ function MenuProvider($$interimElementProvider) {
           do {
             if (target == opts.menuContentEl[0]) return;
             if (hasAnyAttribute(target, ['ng-click', 'ng-href', 'ui-sref'])) {
-              if (!target.hasAttribute('disabled')) {
+              if (!target.hasAttribute('disabled') && !$mdUtil.getClosest(target, 'MD-MENU')) {
                 close();
               }
               break;
@@ -219,7 +220,7 @@ function MenuProvider($$interimElementProvider) {
       // focus them until we find one that accepts focus
       var didFocus;
       for (var i = currentIndex + direction; i >= 0 && i < items.length; i = i + direction) {
-        var focusTarget = items[i].firstElementChild || items[i];
+        var focusTarget = items[i].querySelector('.md-button');
         didFocus = attemptFocus(focusTarget);
         if (didFocus) {
           break;

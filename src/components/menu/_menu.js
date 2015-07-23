@@ -212,7 +212,7 @@ function MenuController($mdMenu, $attrs, $element, $scope) {
 
   this.focusMenuContainer = function focusMenuContainer() {
     var focusTarget = menuContainer[0].querySelector('[md-menu-focus-target]');
-    if (!focusTarget) focusTarget = menuContainer[0].firstElementChild.firstElementChild.firstElementChild;
+    if (!focusTarget) focusTarget = menuContainer[0].querySelector('.md-button');
     focusTarget.focus();
   };
 
@@ -232,7 +232,7 @@ function MenuController($mdMenu, $attrs, $element, $scope) {
 
     ctrl.isOpen = false;
     triggerElement.setAttribute('aria-expanded', 'false');
-    $mdMenu.hide();
+    $mdMenu.hide(null, { closeAll: true });
 
     $scope.$emit('$mdMenuClose', $element);
 

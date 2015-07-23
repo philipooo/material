@@ -9,7 +9,7 @@ angular.module('material.components.menuBar', [
 ])
 .directive('mdMenuBar', MenuBarDirective);
 
-function MenuBarDirective() {
+function MenuBarDirective($mdUtil) {
   return {
     restrict: 'E',
     require: 'mdMenuBar',
@@ -23,14 +23,14 @@ function MenuBarDirective() {
         if (!menuEl.hasAttribute('md-position-mode')) {
           menuEl.setAttribute('md-position-mode', 'left bottom');
         }
-        var contentEl = menuEl.children[1];
-        if (contentEl && contentEl.nodeName == 'MD-MENU-CONTENT') {
+        var contentEls = $mdUtil.nodesToArray(menuEl.querySelectorAll('md-menu-content'));
+        angular.forEach(contentEls, function(contentEl) {
           contentEl.classList.add('md-menu-bar-menu');
           contentEl.classList.add('md-dense');
           if (!contentEl.hasAttribute('width')) {
             contentEl.setAttribute('width', 5);
           }
-        }
+        });
       }
     });
     return link;
