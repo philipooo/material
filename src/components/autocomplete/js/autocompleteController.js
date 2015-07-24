@@ -17,7 +17,7 @@ function MdAutocompleteCtrl ($scope, $element, $mdUtil, $mdConstant, $mdTheming,
       noBlur               = false,
       selectedItemWatchers = [],
       hasFocus             = false,
-      lastCount            = 0;
+      lastCount            = 0,
       debouncedResize      = $$rAF.throttle(positionDropdown);
 
   //-- public variables with handlers

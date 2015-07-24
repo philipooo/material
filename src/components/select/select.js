@@ -863,12 +863,6 @@ function SelectProvider($$interimElementProvider) {
           info.dropDown.element.css( animator.toCss(info.dropDown.styles) );
 
           $$rAF(function(){
-
-            // Activate transitions (with md-active), then all the transform
-            // to clear and transitions to trigger for the default styles
-            //if ( !!immediate ) $animateCss(element, { addClass:'md-active', duration:0} );
-            //else               element.addClass('md-active');
-
             element.addClass('md-active');
             info.dropDown.element.css( animator.toCss({transform:''}) );
 
@@ -978,13 +972,14 @@ function SelectProvider($$interimElementProvider) {
        *  '$$loadingAsyncDone' flag
        */
       function watchAsyncLoad() {
-        var usingAsync = opts.loadingAsync && opts.loadingAsync.then;
-
-        if( usingAsync && !opts.isRemoved ) {
+        if( opts.loadingAsync && !opts.isRemoved ) {
           scope.$$loadingAsyncDone = false;
-          opts.loadingAsync.then(function () {
-              scope.$$loadingAsyncDone = true;
-          });
+
+          $q.when(opts.loadingAsync)
+            .then(function () {
+                scope.$$loadingAsyncDone = true;
+                delete opts.loadingAsync;
+            });
         }
       }
 
@@ -1171,18 +1166,24 @@ function SelectProvider($$interimElementProvider) {
         optionNodes = selectNode.getElementsByTagName('md-option'),
         optgroupNodes = selectNode.getElementsByTagName('md-optgroup');
 
+      var loading = angular.isDefined(opts.loadingAsync);
       var centeredNode;
-      // If a selected node, center around that
-      if (selectedNode) {
-        centeredNode = selectedNode;
-        // If there are option groups, center around the first option group
-      } else if (optgroupNodes.length) {
-        centeredNode = optgroupNodes[0];
-        // Otherwise, center around the first optionNode
-      } else if (optionNodes.length) {
-        centeredNode = optionNodes[0];
-        // In case there are no options, center on whatever's in there... (eg progress indicator)
+      if ( !loading ) {
+        // If a selected node, center around that
+        if (selectedNode) {
+          centeredNode = selectedNode;
+          // If there are option groups, center around the first option group
+        } else if (optgroupNodes.length) {
+          centeredNode = optgroupNodes[0];
+          // Otherwise - if we are not loading async - center around the first optionNode
+        } else if (optionNodes.length ) {
+          centeredNode = optionNodes[0];
+          // In case there are no options, center on whatever's in there... (eg progress indicator)
+        } else {
+          centeredNode = contentNode.firstElementChild || contentNode;
+        }
       } else {
+        // If loading, center on progress indicator
         centeredNode = contentNode.firstElementChild || contentNode;
       }
 
@@ -1262,8 +1263,8 @@ function SelectProvider($$interimElementProvider) {
         container : {
           element : angular.element(containerNode),
           styles : {
-            left : Math.round( clamp(bounds.left, left, bounds.right - containerRect.width) ),
-            top : Math.round( clamp(bounds.top, top, bounds.bottom - containerRect.height) ),
+            left : Math.floor( clamp(bounds.left, left, bounds.right - containerRect.width) ),
+            top : Math.floor( clamp(bounds.top, top, bounds.bottom - containerRect.height) ),
             'min-width' : minWidth
           }
         },
