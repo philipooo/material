@@ -24,7 +24,7 @@ md-menu-bar {
   }
 }
 
-md-menu-content.md-menu-bar-menu {
+md-menu-content.md-menu-bar-menu.md-dense {
   max-height: none;
   padding: 2 * $baseline-grid 0;
   md-menu-item.md-with-icon {
@@ -41,7 +41,8 @@ md-menu-content.md-menu-bar-menu {
     }
   }
   .md-button {
-    min-height: 4 * $baseline-grid;
+    min-height: 0;
+    height: 4 * $baseline-grid;
   }
   md-menu-divider {
     margin: $baseline-grid 0;

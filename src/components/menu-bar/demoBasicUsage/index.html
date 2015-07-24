@@ -33,7 +33,7 @@
           <md-menu-item class="md-with-icon">
             <md-menu>
               <md-button ng-click="$mdOpenMenu()">Mode</md-button>
-              <md-menu-content>
+              <md-menu-content width="3">
                 <md-menu-item class="md-with-icon">
                   <md-icon ng-show="ctrl.settings.presentationMode" md-svg-icon="check"></md-icon>
                   <md-button ng-click="ctrl.toggleSetting('presentationMode')">Presentation</md-button>
@@ -45,6 +45,25 @@
                 <md-menu-item class="md-with-icon">
                   <md-icon ng-show="ctrl.settings.modifiableMode" md-svg-icon="check"></md-icon>
                   <md-button ng-click="ctrl.toggleSetting('modifiableMode')">Modifiable</md-button>
+                </md-menu-item>
+                <md-menu-item class="md-with-icon">
+                  <md-menu>
+                    <md-button ng-click="$mdOpenMenu()">Mode</md-button>
+                    <md-menu-content width="3">
+                      <md-menu-item class="md-with-icon">
+                        <md-icon ng-show="ctrl.settings.presentationMode" md-svg-icon="check"></md-icon>
+                        <md-button ng-click="ctrl.toggleSetting('presentationMode')">Presentation</md-button>
+                      </md-menu-item>
+                      <md-menu-item class="md-with-icon">
+                        <md-icon ng-show="ctrl.settings.editMode" md-svg-icon="check"></md-icon>
+                        <md-button ng-click="ctrl.toggleSetting('editMode')">Edit</md-button>
+                      </md-menu-item>
+                      <md-menu-item class="md-with-icon">
+                        <md-icon ng-show="ctrl.settings.modifiableMode" md-svg-icon="check"></md-icon>
+                        <md-button ng-click="ctrl.toggleSetting('modifiableMode')">Modifiable</md-button>
+                      </md-menu-item>
+                    </md-menu-content>
+                  </md-menu>
                 </md-menu-item>
               </md-menu-content>
             </md-menu>

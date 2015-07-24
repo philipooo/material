@@ -290,6 +290,8 @@ function MenuProvider($$interimElementProvider) {
           boundryNode = opts.parent[0],
           boundryNodeRect = boundryNode.getBoundingClientRect();
 
+      var menuStyle = $window.getComputedStyle(openMenuNode);
+
       var originNode = opts.target[0].querySelector('[md-menu-origin]') || opts.target[0],
           originNodeRect = originNode.getBoundingClientRect();
 
@@ -329,10 +331,9 @@ function MenuProvider($$interimElementProvider) {
         case 'target':
           position.top = existingOffsets.top + originNodeRect.top - alignTargetRect.top;
           break;
-        // Future support for mdMenuBar
-        // case 'top':
-        //   position.top = originNodeRect.top;
-        //   break;
+        case 'cascade':
+          position.top = originNodeRect.top - parseFloat(menuStyle.paddingTop);
+          break;
         case 'bottom':
           position.top = originNodeRect.top + originNodeRect.height;
           break;
@@ -349,15 +350,14 @@ function MenuProvider($$interimElementProvider) {
           position.left = originNodeRect.right - openMenuNodeRect.width + (openMenuNodeRect.right - alignTargetRect.right);
           transformOrigin += 'right';
           break;
-        // Future support for mdMenuBar
+        case 'cascade':
+          var willFitRight = (originNodeRect.right + openMenuNodeRect.width) < bounds.right;
+          position.left = willFitRight ? originNodeRect.right : originNodeRect.left - openMenuNodeRect.width;
+          break;
         case 'left':
           position.left = originNodeRect.left;
           transformOrigin += 'left';
           break;
-        // case 'right':
-        //   position.left = originNodeRect.right - containerNode.offsetWidth;
-        //   transformOrigin += 'right';
-        //   break;
         default:
           throw new Error('Invalid target mode "' + positionMode.left + '" specified for md-menu on X axis.');
       }

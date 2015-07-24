@@ -135,7 +135,7 @@ angular.module('material.components.menu', [
  *
  */
 
-function MenuDirective($mdMenu) {
+function MenuDirective($mdMenu, $mdUtil) {
   return {
     restrict: 'E',
     require: 'mdMenu',
@@ -154,6 +154,15 @@ function MenuDirective($mdMenu) {
     triggerElement.setAttribute('type', 'button');
     if (templateElement.children().length != 2) {
       throw Error('Invalid HTML for md-menu. Expected two children elements.');
+    }
+
+    var nestedMenus = templateElement[0].querySelectorAll('md-menu');
+    if (nestedMenus) {
+      angular.forEach($mdUtil.nodesToArray(nestedMenus), function(menuEl) {
+        if (!menuEl.hasAttribute('md-position-mode')) {
+          menuEl.setAttribute('md-position-mode', 'cascade');
+        }
+      });
     }
     return link;
   }
