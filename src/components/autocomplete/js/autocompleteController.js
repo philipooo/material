@@ -7,7 +7,7 @@ var ITEM_HEIGHT  = 41,
     MENU_PADDING = 8;
 
 function MdAutocompleteCtrl ($scope, $element, $mdUtil, $mdConstant, $mdTheming, $window,
-                             $animate, $rootElement, $attrs, $q) {
+                             $animate, $rootElement, $attrs, $q, $$rAF) {
   //-- private variables
   var ctrl                 = this,
       itemParts            = $scope.itemsExpr.split(/ in /i),
@@ -18,6 +18,7 @@ function MdAutocompleteCtrl ($scope, $element, $mdUtil, $mdConstant, $mdTheming,
       selectedItemWatchers = [],
       hasFocus             = false,
       lastCount            = 0;
+      debouncedResize      = $$rAF.throttle(positionDropdown);
 
   //-- public variables with handlers
   defineProperty('hidden', handleHiddenChange, true);
@@ -136,15 +137,16 @@ function MdAutocompleteCtrl ($scope, $element, $mdUtil, $mdConstant, $mdTheming,
     $attrs.$observe('required', function (value) { ctrl.isRequired = value !== null; });
     $scope.$watch('searchText', wait ? $mdUtil.debounce(handleSearchText, wait) : handleSearchText);
     $scope.$watch('selectedItem', selectedItemChange);
-    angular.element($window).on('resize', positionDropdown);
     $scope.$on('$destroy', cleanup);
+
+    angular.element($window).on('resize', debouncedResize );
   }
 
   /**
    * Removes any events or leftover elements created by this controller
    */
   function cleanup () {
-    angular.element($window).off('resize', positionDropdown);
+    angular.element($window).off('resize', debouncedResize);
     elements.$.ul.remove();
   }
 

@@ -4,7 +4,11 @@
  * requirements.
  */
 angular
-  .module('material.core', [ 'material.core.gestures', 'material.core.theming' ])
+  .module('material.core', [
+    'ngAnimate',                 // for $animateCss
+    'material.core.gestures',    // for $mdGesture
+    'material.core.theming'      // for $mdTheme
+  ])
   .config( MdCoreConfigure );
 
 
