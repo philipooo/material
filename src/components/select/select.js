@@ -808,24 +808,19 @@ function SelectProvider($$interimElementProvider) {
      */
     function onShow(scope, element, opts) {
 
-      // Sanitize and set defaults on opts
+      watchAsyncLoad();
       sanitizeAndConfigure(scope, opts);
+      configureAria(opts.target);
 
       opts.hideBackdrop = showBackdrop(scope, element, opts);
 
-      return waitForAsyncLoad()
-        .then(function () {
-          configureAria(opts.target);
+      return showDropDown(scope, element,opts)
+        .then(function(response){
+          opts.alreadyOpen        = true;
+          opts.cleanupInteraction = activateInteraction();
+          opts.cleanupResizing    = activateResizing();
 
-          return showDropDown(scope, element,opts)
-            .then(function(response){
-              opts.alreadyOpen        = true;
-              opts.cleanupInteraction = activateInteraction();
-              opts.cleanupResizing    =  activateResizing();
-
-              return response;
-            });
-
+          return response;
         }, opts.hideBackdrop );
 
 
@@ -846,7 +841,7 @@ function SelectProvider($$interimElementProvider) {
 
             $animateCss(element, { removeClass: 'md-leave', duration:0 })
               .start()
-              .then( transitionInMenu )
+              .then( positionAndFocusMenu )
               .then( resolve );
 
           } catch(e) { reject(e); }
@@ -858,33 +853,27 @@ function SelectProvider($$interimElementProvider) {
        * Initialize container and dropDown menu positions/scale, then animate
        * to show... and autoFocus.
        */
-      function transitionInMenu(immediate) {
+      function positionAndFocusMenu() {
         return $q(function(resolve){
           if ( opts.isRemoved ) return reject(false);
 
+          var info = calculateMenuPositions(scope, element, opts);
+
+          info.container.element.css( animator.toCss(info.container.styles) );
+          info.dropDown.element.css( animator.toCss(info.dropDown.styles) );
+
           $$rAF(function(){
-            $$rAF(function(){
 
-              var info = calculateMenuPositions(scope, element, opts);
+            // Activate transitions (with md-active), then all the transform
+            // to clear and transitions to trigger for the default styles
+            //if ( !!immediate ) $animateCss(element, { addClass:'md-active', duration:0} );
+            //else               element.addClass('md-active');
 
-              info.container.element.css( animator.toCss(info.container.styles) );
-              info.dropDown.element.css( animator.toCss(info.dropDown.styles) );
+            element.addClass('md-active');
+            info.dropDown.element.css( animator.toCss({transform:''}) );
 
-              $$rAF(function(){
-
-                // Activate transitions (with md-active), then all the transform
-                // to clear and transitions to trigger for the default styles
-                //if ( !!immediate ) $animateCss(element, { addClass:'md-active', duration:0} );
-                //else               element.addClass('md-active');
-
-                element.addClass('md-active');
-                info.dropDown.element.css( animator.toCss({transform:''}) );
-
-                autoFocus(opts.focusedNode);
-                resolve();
-              });
-
-            });
+            autoFocus(opts.focusedNode);
+            resolve();
           });
 
         });
@@ -985,27 +974,18 @@ function SelectProvider($$interimElementProvider) {
       }
 
       /**
-       *  If asynchronously loading, wait until load finishes...
+       *  If asynchronously loading, watch and update internal
+       *  '$$loadingAsyncDone' flag
        */
-      function waitForAsyncLoad() {
+      function watchAsyncLoad() {
+        var usingAsync = opts.loadingAsync && opts.loadingAsync.then;
 
-        return $q(function (resolve, reject) {
-          var usingAsync = opts.loadingAsync && opts.loadingAsync.then;
-
-          if( usingAsync ) {
-            scope.$$loadingAsyncDone = false;
-            opts.loadingAsync.then(function () {
-                scope.$$loadingAsyncDone = true;
-            });
-          }
-
-          announceFinished();
-
-          // Resolve/Reject the published promise
-          function announceFinished() {
-            opts.isRemoved ? reject(false) : resolve(true);
-          }
-        });
+        if( usingAsync && !opts.isRemoved ) {
+          scope.$$loadingAsyncDone = false;
+          opts.loadingAsync.then(function () {
+              scope.$$loadingAsyncDone = true;
+          });
+        }
       }
 
       /**
