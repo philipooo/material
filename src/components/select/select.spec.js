@@ -1,4 +1,4 @@
-ddescribe('<md-select>', function() {
+describe('<md-select>', function() {
 
   beforeEach(module('material.components.input'));
   beforeEach(module('material.components.select'));
@@ -128,7 +128,7 @@ ddescribe('<md-select>', function() {
 
     // Simulate click bubble from option to select menu handler
     select.triggerHandler({
-      type: 'mouseup',
+      type: 'click',
       target: angular.element($document.find('md-option')[0])
     });
 
@@ -137,7 +137,7 @@ ddescribe('<md-select>', function() {
     expect(called).toBe(true);
   }));
 
-  iit('restores focus to select when the menu is closed', inject(function($document) {
+  it('restores focus to select when the menu is closed', inject(function($document) {
     var select = setupSelect('ng-model="val"').find('md-select');
     openSelect(select);
 
