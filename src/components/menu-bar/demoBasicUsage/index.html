@@ -91,12 +91,60 @@
           Format
         </button>
         <md-menu-content>
-          <md-menu-item><md-button>Hello world</md-button></md-menu-item>
+          <md-menu-item md-hotkey="M-B"><md-button ng-click="ctrl.toggleSetting('bold')">Bold</md-button></md-menu-item>
+          <md-menu-item md-hotkey="M-I"><md-button ng-click="ctrl.toggleSetting('italic')">Italic</md-button></md-menu-item>
+          <md-menu-item md-hotkey="M-U"><md-button ng-click="ctrl.toggleSetting('underline')">Underline</md-button></md-menu-item>
+          <md-menu-item md-hotkey="A-S-5"><md-button ng-click="ctrl.toggleSetting('strikethrough')">Strikethrough</md-button></md-menu-item>
+          <md-menu-item md-hotkey="M-."><md-button ng-click="ctrl.toggleSetting('superscript')">Superscript</md-button></md-menu-item>
+          <md-menu-item md-hotkey="M-,"><md-button ng-click="ctrl.toggleSetting('subscript')">Subscript</md-button></md-menu-item>
+          <md-menu-divider></md-menu-divider>
+          <md-menu-item>
+            <md-menu>
+              <md-button ng-click="$mdOpenMenu()">Paragraph Styles</md-button>
+              <md-menu-content>
+                <md-menu-item><md-button>Not Implemented</md-button</md-menu-item>
+              </md-menu-content>
+            </md-menu>
+          </md-menu-item>
+          <md-menu-item>
+            <md-menu>
+              <md-button ng-click="$mdOpenMenu()">Align</md-button>
+              <md-menu-content>
+                <md-menu-item><md-button>Not Implemented</md-button</md-menu-item>
+              </md-menu-content>
+            </md-menu>
+          </md-menu-item>
+          <md-menu-item>
+            <md-menu>
+              <md-button ng-click="$mdOpenMenu()">Line spacing</md-button>
+              <md-menu-content>
+                <md-menu-item><md-button>Not Implemented</md-button</md-menu-item>
+              </md-menu-content>
+            </md-menu>
+          </md-menu-item>
+          <md-menu-item>
+            <md-menu>
+              <md-button ng-click="$mdOpenMenu()">Numbered list</md-button>
+              <md-menu-content>
+                <md-menu-item><md-button>Not Implemented</md-button</md-menu-item>
+              </md-menu-content>
+            </md-menu>
+          </md-menu-item>
+          <md-menu-item>
+            <md-menu>
+              <md-button ng-click="$mdOpenMenu()">List options</md-button>
+              <md-menu-content>
+                <md-menu-item><md-button>Not Implemented</md-button</md-menu-item>
+              </md-menu-content>
+            </md-menu>
+          </md-menu-item>
+          <md-menu-divider></md-menu-divider>
+          <md-menu-item md-hotkey="M-/"><md-button ng-click="ctrl.toggleSetting('clearFormatting')">Clear Formatting</md-button></md-menu-item>
         </md-menu-content>
       </md-menu>
       <md-menu>
         <button ng-click="$mdOpenMenu()">
-          Inset
+          Insert
         </button>
         <md-menu-content>
           <md-menu-item><md-button>Hello world</md-button></md-menu-item>

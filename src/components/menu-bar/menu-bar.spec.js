@@ -1,4 +1,4 @@
-ddescribe('mdMenuBar', function() {
+describe('mdMenuBar', function() {
   beforeEach(module('material.components.menuBar'));
 
   describe('MenuBar Directive', function() {

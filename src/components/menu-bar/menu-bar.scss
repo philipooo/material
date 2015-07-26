@@ -59,6 +59,7 @@ md-menu-content.md-menu-bar-menu.md-dense {
       text-transform: none;
       font-weight: normal;
       border-radius: 0px;
+      padding-left: 2 * $baseline-grid;
       &:after {
         display: block;
         content: '\25BC';
